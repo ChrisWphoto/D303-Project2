@@ -166,11 +166,32 @@ int evaluator::solve(int lhs, int rhs, char oper)
 
 void evaluator::is_decrement_increment(istringstream& tokens, char next_char, char lookfor, stack<char>& operator_stack, stack<int>& operand_stack)
 {
-	int count = 0;
+	
+	int count = 0, rhs, lhs, answer;
 	char original;
 	original = next_char;
 	
-	
+	//make sure operator's precedence order is kept
+	while(!operator_stack.empty() && operator_stack.top() > next_char)
+	{
+		//if operand stack is empty, throw error
+		if(operand_stack.empty())
+			throw Syntax_Error("The operand stack is empty, too many operators, not enough operands");
+		rhs = operand_stack.top();
+		operand_stack.pop();
+		//if operand stack is empty throw error
+		if(operand_stack.empty())
+			throw Syntax_Error("The operand stack is empty, too many operators, not enough operands");
+		lhs = operand_stack.top();
+		operand_stack.pop();
+		
+		answer = solve(lhs,rhs,operator_stack.top());
+		operator_stack.pop();
+		operand_stack.push(answer);
+		if(operator_stack.empty())
+			{break;}
+		next_char = operator_stack.top();
+	}
 	do
 	{
 		operator_stack.push(next_char);
