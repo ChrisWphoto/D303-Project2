@@ -18,7 +18,7 @@ int evaluator::exp_evaluator(const string expression)
 											//may not be necessary for ending whitespace, but it made my ++2 work.
 
 		//Read from string until empty
-		while(tokens>>next_char)
+		while(tokens>>next_char) 
 		{ 
 			if(isdigit(next_char)){ 
 				//if it's a digit then replace and take out as int
