@@ -10,7 +10,7 @@ using namespace std;
 class evaluator
 {
 public:
-	evaluator()	{  }
+	evaluator()	{ char_idx = -1; }
 
 	int Precedence(char op) const {
       return precedence[operators.find(op)];
@@ -28,6 +28,7 @@ public:
 private:
 	static const string operators;
 	static const int precedence[];
+	int char_idx;
 	
 };
 

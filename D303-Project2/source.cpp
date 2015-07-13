@@ -10,11 +10,19 @@ int main()
 	int answer2 = 0;
 	int a = 2;
 
+	int error_test1 = 0;
+	int error_test2 = 0;
+
 	try
 	{
 		evaluator l;
-		answer = l.exp_evaluator("3 >= (4-2)");
-		answer2 = l.exp_evaluator("!(4 > 5)");
+		
+		//answer = l.exp_evaluator("3 >= (4-2)");
+		//answer2 = l.exp_evaluator("!(4 > 5)");
+
+		//error_test1 = l.exp_evaluator("(3+4))");
+		error_test2 = l.exp_evaluator("*");
+
 	}catch(const invalid_argument& ia)
 	{
 		cerr << "Invalid argument: " << ia.what() << '\n';

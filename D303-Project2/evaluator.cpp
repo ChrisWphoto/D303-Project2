@@ -20,8 +20,9 @@ int evaluator::exp_evaluator(const string expression)
 	//may not be necessary for ending whitespace, but it made my ++2 work.
 
 	//Read from string until empty
-	while (tokens >> next_char)
+	while (++char_idx, tokens >> next_char)
 	{
+
 		if (isdigit(next_char)){
 			//if it's a digit then replace and take out as int
 			tokens.putback(next_char);
@@ -29,12 +30,12 @@ int evaluator::exp_evaluator(const string expression)
 			tokens >> num;
 
 			if (digit == false)	{ operand_stack.push(num); }
-			else { throw Syntax_Error("Error after character"); }
+			else { throw Syntax_Error("Error after character @ char: " + std::to_string(char_idx)); }
 
 			digit = true; //now expecting an operator
 		}
 		else if (next_char == ')')
-			throw Syntax_Error("Extra closing parenthesis found.");
+			throw Syntax_Error("Extra closing parenthesis found @ char: " + std::to_string(char_idx));
 		else if (next_char == '(')
 		{
 			string parentheticalExp = ""; // ADDED BY DR for parentheses case
@@ -55,7 +56,7 @@ int evaluator::exp_evaluator(const string expression)
 				parentheticalExp += addChar;
 			}
 			if (parenthesisCount != 0)
-				throw Syntax_Error("Missing closing parenthesis.");
+				throw Syntax_Error("Missing closing parenthesis @ char: " + std::to_string(char_idx));
 			operand_stack.push(exp_evaluator(parentheticalExp));
 		}
 		else{
@@ -74,7 +75,7 @@ int evaluator::exp_evaluator(const string expression)
 					break;
 				}
 				else
-					throw Syntax_Error("Too many operators! Equal sign can only follow !, > or < operators.");
+					throw Syntax_Error("Too many operators! Equal sign can only follow !, > or < operators @ char: " + std::to_string(char_idx));
 			default:
 				//if operator stack is not empty then figure out precedence, 
 				//if it is empty then automatically add it
@@ -119,7 +120,7 @@ void evaluator::find_equation(char oper, bool completed, stack<char>& operator_s
 	char top;
 	//if operator stack is empty throw error
 	if (operator_stack.empty())
-		throw Syntax_Error("The operator stack is empty, not enough operators to complete equation");
+		throw Syntax_Error("The operator stack is empty, not enough operators to complete equation @ char: " + std::to_string(char_idx));
 
 	top = operator_stack.top();
 
@@ -127,12 +128,12 @@ void evaluator::find_equation(char oper, bool completed, stack<char>& operator_s
 	{
 		//if operand stack is empty, throw error
 		if (operand_stack.empty())
-			throw Syntax_Error("The operand stack is empty, too many operators, not enough operands");
+			throw Syntax_Error("The operand stack is empty, too many operators, not enough operands @ char: " + std::to_string(char_idx));
 		rhs = operand_stack.top();
 		operand_stack.pop();
 		//if operand stack is empty throw error
 		if (operand_stack.empty())
-			throw Syntax_Error("The operand stack is empty, too many operators, not enough operands");
+			throw Syntax_Error("The operand stack is empty, too many operators, not enough operands @ char: " + std::to_string(char_idx));
 		lhs = operand_stack.top();
 		operand_stack.pop();
 		operator_stack.pop();
@@ -176,7 +177,7 @@ bool evaluator::solveBooleanEquation(char oper, stack<char>& operator_stack, sta
 		operand_stack.push(solveBoolean(lhs, rhs, oper, false));
 	}
 	else if (operand_stack.empty())
-		throw Syntax_Error("The operand stack is empty, too many operators, not enough operands");
+		throw Syntax_Error("The operand stack is empty, too many operators, not enough operands @ char: " + std::to_string(char_idx));
 	else
 	{
 		lhs = operand_stack.top();
@@ -212,7 +213,7 @@ bool evaluator::solveBoolean(int lhs, int rhs, char oper, bool twoOpers) // adde
 		if (twoOpers)
 			answer = (lhs == rhs);
 		else
-			throw Syntax_Error("Cannot have single equals sign");
+			throw Syntax_Error("Cannot have single equals sign @ char: " + std::to_string(char_idx));
 		break;
 	}
 
@@ -266,7 +267,7 @@ void evaluator::is_decrement_increment(istringstream& tokens, char next_char, ch
 
 	//checks that it's not 1++2 or just ++2 also can see if its format is similar to -++2
 	if (count % 2 != 1 && !operand_stack.empty() && original == lookfor)
-		throw Syntax_Error("Not enough '+' operators to increment");
+		throw Syntax_Error("Not enough '+' operators to increment @ char: " + std::to_string(char_idx));
 
 
 	if (isdigit(next_char))
@@ -281,18 +282,18 @@ void evaluator::is_decrement_increment(istringstream& tokens, char next_char, ch
 		for (int i = 0; i < count / 2; i++)
 		{
 			if (operator_stack.empty())
-				throw Syntax_Error("The operator stack is empty, cannot increment/decrement");
+				throw Syntax_Error("The operator stack is empty, cannot increment/decrement @ char: " + std::to_string(char_idx));
 			first = operator_stack.top();
 			operator_stack.pop();
 			if (operator_stack.empty())
-				throw Syntax_Error("The operator stack is empty, cannot increment/decrement");
+				throw Syntax_Error("The operator stack is empty, cannot increment/decrement @ char: " + std::to_string(char_idx));
 			second = operator_stack.top();
 			operator_stack.pop();
 			//check the two that were popped to see if they were both '-'
 			if (first != lookfor || second != lookfor)
 				throw Syntax_Error("Expected '++', did not receive it");
 			if (operand_stack.empty())
-				throw Syntax_Error("The operand stack is empty, cannot increment/decrement without a digit!");
+				throw Syntax_Error("The operand stack is empty, cannot increment/decrement without a digit! @ char: " + std::to_string(char_idx));
 			temp = operand_stack.top();
 			operand_stack.pop();
 			if (lookfor == '+')
@@ -304,7 +305,7 @@ void evaluator::is_decrement_increment(istringstream& tokens, char next_char, ch
 	}
 	else
 	{
-		throw Syntax_Error("Expected a digit, did not receive it");
+		throw Syntax_Error("Expected a digit, did not receive it @ char: " + std::to_string(char_idx));
 	}
 }
 void evaluator::is_bool(istringstream& is, char next_char)
