@@ -13,8 +13,8 @@ int main()
 	try
 	{
 		evaluator l;
-		answer = l.exp_evaluator("3^(2*4))/2");
-		answer2 = l.exp_evaluator("3^2*4/2");
+		answer = l.exp_evaluator("3 >= (4-2)");
+		answer2 = l.exp_evaluator("!(4 > 5)");
 	}catch(const invalid_argument& ia)
 	{
 		cerr << "Invalid argument: " << ia.what() << '\n';
