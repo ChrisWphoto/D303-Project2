@@ -11,6 +11,8 @@ const int evaluator::precedence[] = {1,2,3,3,4,4,4,4,5,5,6,6,6,7,8,8,8,8};		////
 
 int evaluator::exp_evaluator(const string expression)
 	{
+		stack<int> operand_stack;
+		stack<char> operator_stack;
 		bool completed = false;
 		bool digit = false;
 		char next_char, upcoming;
@@ -20,16 +22,42 @@ int evaluator::exp_evaluator(const string expression)
 		//Read from string until empty
 		while(tokens>>next_char) 
 		{ 
-			if(isdigit(next_char)){ 
+			if (isdigit(next_char)){
 				//if it's a digit then replace and take out as int
 				tokens.putback(next_char);
 				int num;
-				tokens>>num;
+				tokens >> num;
 
 				if (digit == false)	{ operand_stack.push(num); }
-				else { throw Syntax_Error("Error after character");}
-				
+				else { throw Syntax_Error("Error after character"); }
+
 				digit = true; //now expecting an operator
+			}
+			else if (next_char == ')')
+				throw Syntax_Error("Extra closing parenthesis found.");
+			else if (next_char == '(')
+			{
+				string parentheticalExp = ""; // ADDED BY DR for parentheses case
+				int parenthesisCount = 1;
+				bool open_parentheses = true;
+				char addChar;
+				while (open_parentheses && tokens >> addChar)
+				{
+					if (addChar == '(')
+						parenthesisCount++;
+					if (addChar == ')' && parenthesisCount == 1)
+					{
+						parenthesisCount--;
+						break;
+					}
+					if (addChar == ')')
+						parenthesisCount--;
+					parentheticalExp += addChar;
+				}
+				if (parenthesisCount != 0)
+					throw Syntax_Error("Missing closing parenthesis.");
+				int evaluatorAnswer = exp_evaluator(parentheticalExp);
+				operand_stack.push(evaluatorAnswer);
 			}
 			else{
 
@@ -38,7 +66,7 @@ int evaluator::exp_evaluator(const string expression)
 				upcoming = tokens.peek();
 				switch (upcoming){
 				case '+':case '-':
-					is_decrement_increment(tokens, next_char, upcoming);
+					is_decrement_increment(tokens, next_char, upcoming, operator_stack, operand_stack);
 					break;
 				default:
 					//if operator stack is not empty then figure out precedence, 
@@ -52,7 +80,7 @@ int evaluator::exp_evaluator(const string expression)
 							operator_stack.push(next_char);
 						}
 						else{
-							find_equation(next_char, completed);
+							find_equation(next_char, completed, operator_stack, operand_stack);
 						}
 					}
 					else {
@@ -67,14 +95,14 @@ int evaluator::exp_evaluator(const string expression)
 
 		//finish equation until all operators are gone
 		while(!operator_stack.empty()){
-			find_equation(operator_stack.top(), completed);
+			find_equation(operator_stack.top(), completed, operator_stack, operand_stack);
 		}
 		return operand_stack.top();
 	}
 
 
 
-void evaluator::find_equation(char oper, bool completed)
+void evaluator::find_equation(char oper, bool completed, stack<char>& operator_stack, stack<int>& operand_stack)
 {
 	int lhs, rhs, answer;
 	char top;
@@ -136,13 +164,34 @@ int evaluator::solve(int lhs, int rhs, char oper)
 }
 
 
-void evaluator::is_decrement_increment(istringstream& tokens, char next_char, char lookfor)
+void evaluator::is_decrement_increment(istringstream& tokens, char next_char, char lookfor, stack<char>& operator_stack, stack<int>& operand_stack)
 {
-	int count = 0;
+	
+	int count = 0, rhs, lhs, answer;
 	char original;
 	original = next_char;
 	
-	
+	//make sure operator's precedence order is kept
+	while(!operator_stack.empty() && operator_stack.top() > next_char)
+	{
+		//if operand stack is empty, throw error
+		if(operand_stack.empty())
+			throw Syntax_Error("The operand stack is empty, too many operators, not enough operands");
+		rhs = operand_stack.top();
+		operand_stack.pop();
+		//if operand stack is empty throw error
+		if(operand_stack.empty())
+			throw Syntax_Error("The operand stack is empty, too many operators, not enough operands");
+		lhs = operand_stack.top();
+		operand_stack.pop();
+		
+		answer = solve(lhs,rhs,operator_stack.top());
+		operator_stack.pop();
+		operand_stack.push(answer);
+		if(operator_stack.empty())
+			{break;}
+		next_char = operator_stack.top();
+	}
 	do
 	{
 		operator_stack.push(next_char);
