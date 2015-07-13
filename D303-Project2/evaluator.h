@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <stack>
+#include "Syntax Error.h"
 using namespace std;
 
 class evaluator
@@ -18,8 +19,7 @@ public:
 	int exp_evaluator(const string expression);
 	int solve(int, int, char);
 	void find_equation(char top, bool completed);
-	void is_increment(istringstream&, char );
-	void is_decrement(istringstream& , char );
+	void is_decrement_increment(istringstream&, char, char);
 	void is_bool(istringstream& , char );
 
 
