@@ -22,35 +22,40 @@ int evaluator::exp_evaluator(const string expression)
 		//Read from string until empty
 		while(tokens>>next_char) 
 		{ 
-			if(isdigit(next_char)){ 
+			if (isdigit(next_char)){
 				//if it's a digit then replace and take out as int
 				tokens.putback(next_char);
 				int num;
-				tokens>>num;
+				tokens >> num;
 
 				if (digit == false)	{ operand_stack.push(num); }
-				else { throw Syntax_Error("Error after character");}
-				
+				else { throw Syntax_Error("Error after character"); }
+
 				digit = true; //now expecting an operator
 			}
+			else if (next_char == ')')
+				throw Syntax_Error("Extra closing parenthesis found.");
 			else if (next_char == '(')
 			{
 				string parentheticalExp = ""; // ADDED BY DR for parentheses case
-				int parenthesisCount = 0;
+				int parenthesisCount = 1;
 				bool open_parentheses = true;
-				while (open_parentheses)
+				char addChar;
+				while (open_parentheses && tokens >> addChar)
 				{
-					char addChar;
-					tokens >> addChar;
 					if (addChar == '(')
 						parenthesisCount++;
-					if (addChar == ')' && parenthesisCount == 0)
+					if (addChar == ')' && parenthesisCount == 1)
+					{
+						parenthesisCount--;
 						break;
+					}
 					if (addChar == ')')
 						parenthesisCount--;
-
 					parentheticalExp += addChar;
 				}
+				if (parenthesisCount != 0)
+					throw Syntax_Error("Missing closing parenthesis.");
 				int evaluatorAnswer = exp_evaluator(parentheticalExp);
 				operand_stack.push(evaluatorAnswer);
 			}
