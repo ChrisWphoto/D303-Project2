@@ -11,6 +11,8 @@ const int evaluator::precedence[] = {1,2,3,3,4,4,4,4,5,5,6,6,6,7,8,8,8,8};		////
 
 int evaluator::exp_evaluator(const string expression)
 	{
+		stack<int> operand_stack;
+		stack<char> operator_stack;
 		bool completed = false;
 		bool digit = false;
 		char next_char, upcoming;
@@ -31,6 +33,27 @@ int evaluator::exp_evaluator(const string expression)
 				
 				digit = true; //now expecting an operator
 			}
+			else if (next_char == '(')
+			{
+				string parentheticalExp = ""; // ADDED BY DR for parentheses case
+				int parenthesisCount = 0;
+				bool open_parentheses = true;
+				while (open_parentheses)
+				{
+					char addChar;
+					tokens >> addChar;
+					if (addChar == '(')
+						parenthesisCount++;
+					if (addChar == ')' && parenthesisCount == 0)
+						break;
+					if (addChar == ')')
+						parenthesisCount--;
+
+					parentheticalExp += addChar;
+				}
+				int evaluatorAnswer = exp_evaluator(parentheticalExp);
+				operand_stack.push(evaluatorAnswer);
+			}
 			else{
 
 				//ADDED JW 
@@ -38,7 +61,7 @@ int evaluator::exp_evaluator(const string expression)
 				upcoming = tokens.peek();
 				switch (upcoming){
 				case '+':case '-':
-					is_decrement_increment(tokens, next_char, upcoming);
+					is_decrement_increment(tokens, next_char, upcoming, operator_stack, operand_stack);
 					break;
 				default:
 					//if operator stack is not empty then figure out precedence, 
@@ -52,7 +75,7 @@ int evaluator::exp_evaluator(const string expression)
 							operator_stack.push(next_char);
 						}
 						else{
-							find_equation(next_char, completed);
+							find_equation(next_char, completed, operator_stack, operand_stack);
 						}
 					}
 					else {
@@ -67,14 +90,14 @@ int evaluator::exp_evaluator(const string expression)
 
 		//finish equation until all operators are gone
 		while(!operator_stack.empty()){
-			find_equation(operator_stack.top(), completed);
+			find_equation(operator_stack.top(), completed, operator_stack, operand_stack);
 		}
 		return operand_stack.top();
 	}
 
 
 
-void evaluator::find_equation(char oper, bool completed)
+void evaluator::find_equation(char oper, bool completed, stack<char>& operator_stack, stack<int>& operand_stack)
 {
 	int lhs, rhs, answer;
 	char top;
@@ -136,7 +159,7 @@ int evaluator::solve(int lhs, int rhs, char oper)
 }
 
 
-void evaluator::is_decrement_increment(istringstream& tokens, char next_char, char lookfor)
+void evaluator::is_decrement_increment(istringstream& tokens, char next_char, char lookfor, stack<char>& operator_stack, stack<int>& operand_stack)
 {
 	int count = 0;
 	char original;

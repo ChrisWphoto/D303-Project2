@@ -7,18 +7,22 @@ using namespace std;
 int main()
 {
 	int answer = 0;
+	int answer2 = 0;
 	int a = 2;
 
 	try
 	{
 		evaluator l;
-		answer = l.exp_evaluator("++++2-5*3^2");
+		answer = l.exp_evaluator("(3^(2*4))/2");
+		answer2 = l.exp_evaluator("3^2*4/2");
 	}catch(const invalid_argument& ia)
 	{
 		cerr << "Invalid argument: " << ia.what() << '\n';
 	}
 
-	cout <<--++a;
+	//cout <<--++a;
+	cout << answer << endl << answer2 << endl;
+	system("pause");
 	return 0;
 }
 
