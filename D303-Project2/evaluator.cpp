@@ -98,17 +98,28 @@ int evaluator::exp_evaluator(const string expression)
 					throw Syntax_Error("digit must follow negative sign @ char: " + std::to_string(char_idx));
 			}
 
-			//decremnt / increment
+			//decrement / increment
 			else if (upcoming == '+' || upcoming == '-'){ 
 				is_decrement_increment(tokens, next_char, upcoming, operator_stack, operand_stack);
+			}
+			//&&
+			else if (next_char == '&'){
+				if (upcoming != '&')
+					throw Syntax_Error("& must be followed by another & @ char: " + std::to_string(char_idx));
+				else
+					solveBooleanEquation(next_char, operator_stack, operand_stack, tokens);
+			}
+			//||
+			else if (next_char == '|'){
+				if (upcoming != '|')
+					throw Syntax_Error("| must be followed by another | @ char: " + std::to_string(char_idx));
+				else
+					solveBooleanEquation(next_char, operator_stack, operand_stack, tokens);
 			}
 			//Boolean
 			else if (upcoming == '='){ 
 				if (next_char == '!' || next_char == '>' || next_char == '<' || next_char == '=')
-				{
 					solveBooleanEquation(next_char, operator_stack, operand_stack, tokens);
-					break;
-				}
 				else
 					throw Syntax_Error("Equal sign can only follow !, > or < operators @ char: " + std::to_string(char_idx));
 			}
@@ -255,6 +266,18 @@ bool evaluator::solveBoolean(int lhs, int rhs, char oper, bool twoOpers) // adde
 			answer = (lhs == rhs);
 		else
 			throw Syntax_Error("Cannot have single equals sign @ char: " + std::to_string(char_idx));
+		break;
+	case '&':
+		if (twoOpers)
+			answer = (lhs && rhs);
+		else
+			throw Syntax_Error("Cannot have single & sign @ char: " + std::to_string(char_idx));
+		break;
+	case '|':
+		if (twoOpers)
+			answer = (lhs || rhs);
+		else
+			throw Syntax_Error("Cannot have single | sign @ char: " + std::to_string(char_idx));
 		break;
 	}
 

@@ -27,9 +27,10 @@ int main()
 	{
 		//redeclaring eval object because I want index of error to be correct if reported 
 		evaluator l;
-		answer = l.exp_evaluator("1+2*3");
+		answer = l.exp_evaluator("!(2 > 1) || (3 < 4)");
 		evaluator l1;
-		answer2 = l1.exp_evaluator("2+2^2*3");
+		answer2 = l1.exp_evaluator("(4 >= 3) && !(2 == 2)");
+		/*
 		evaluator l2;
 		answer3 = l2.exp_evaluator("1==4");
 		evaluator l3;
@@ -50,13 +51,15 @@ int main()
 		evaluator lError, lError2;
 		error_test1 = lError.exp_evaluator("(3+4))");
 		//error_test2 = lError2.exp_evaluator("*");
-
+		*/
 	}catch(const invalid_argument& ia)
 	{
 		cerr << "Invalid argument: " << ia.what() << '\n';
 	}
 
 	//Table for testing
+	cout << answer << endl << answer2 << endl;
+	/*
 	cout << endl << setw(27)<< "<--Testing-->" << endl;
 	cout << setw(20) << "Expression" << setw(10) << "Result" << endl; 
 	cout << setw(20) << "1+2*3" << setw(10) << answer << endl;
@@ -67,7 +70,7 @@ int main()
 	cout << setw(20) << "-2+2^2*3" << setw(10) << answer7 << endl;
 	cout << setw(20) << "-2" << setw(10) << answer8 << endl;
 	cout << setw(20) << "2*-(3*2)" << setw(10) << answer9 << endl;
-
+	*/
 	cout << endl;
 	system("pause");
 	return 0;
