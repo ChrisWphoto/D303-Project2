@@ -4,8 +4,8 @@
 #include <stack>
 #include "evaluator.h"
 using namespace std;															//** KEY ***************************************
-//  | : ||     & : &&      = : ==      n : !=
-//  g : >=     l : <=      ~ : negative
+																				//  | : ||     & : &&      = : ==      n : !=
+																				//  g : >=     l : <=      ~ : negative
 const string evaluator::operators = "|&=n>g<l+-*/%^~di!";						//  d : --     i : ++
 const int evaluator::precedence[] = { 1, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 6, 7, 8, 8, 8, 8 };		/////////////////////////////////////////////////
 

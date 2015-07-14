@@ -56,7 +56,7 @@ int main()
 		cerr << "Invalid argument: " << ia.what() << '\n';
 	}
 
-	
+	//Table for testing
 	cout << endl << setw(27)<< "<--Testing-->" << endl;
 	cout << setw(20) << "Expression" << setw(10) << "Result" << endl; 
 	cout << setw(20) << "1+2*3" << setw(10) << answer << endl;
