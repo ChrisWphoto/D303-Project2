@@ -143,7 +143,7 @@ int evaluator::exp_evaluator(const string expression)
 	while (!operator_stack.empty()){
 		if (operator_stack.top() == '!'){
 			solveBooleanEquation(operator_stack.top(), operator_stack, operand_stack, tokens);
-			break;
+			break; //this break used to be below the esle and was cuasing issues. with expressions like 2*2^2
 		}
 		else
 			find_equation(operator_stack.top(), completed, operator_stack, operand_stack);
