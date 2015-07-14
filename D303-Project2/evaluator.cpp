@@ -23,6 +23,7 @@ int evaluator::exp_evaluator(const string expression)
 	while (++char_idx, tokens >> next_char)
 	{
 
+		/* BEGIN: Next Character is a DIGIT*/
 		if (isdigit(next_char)){
 			//if it's a digit then replace and take out as int
 			tokens.putback(next_char);
@@ -59,27 +60,62 @@ int evaluator::exp_evaluator(const string expression)
 				throw Syntax_Error("Missing closing parenthesis @ char: " + std::to_string(char_idx));
 			operand_stack.push(exp_evaluator(parentheticalExp));
 		}
-		else{
-			//ADDED JW 
-			//Check for next character and if its a + or - then take to correct function
-			upcoming = tokens.peek();
+		/* END: Next Character is a DIGIT*/
 
-			switch (upcoming){
-			case '+':case '-':
+
+		/* BEGIN: Next Character is a OPERATOR*/
+		else{ // find proper action for given operator 'next_char'
+			
+			upcoming = tokens.peek(); //check next operator for negative and decrement/increment
+
+			//Negative # at beggining of string
+			if (next_char == '-' && operator_stack.empty() && isdigit(upcoming) && operand_stack.empty()){ 
+				int num;
+				tokens >> num;
+				++char_idx;
+				operand_stack.push(num*-1); //push negative number to stack
+			}
+
+			//Negative number in middle of string
+			else if (next_char != upcoming && upcoming == '-'){ //We have found a negative. i.e. 3*-1 = -3
+				operator_stack.push(next_char);
+				tokens.ignore(); //ignore negative sign
+				tokens >> next_char; //grab next char
+				if (isdigit(next_char)){
+					tokens.putback(next_char);
+					char_idx++; //increment place in string index
+					int num;
+					tokens >> num;
+					operand_stack.push(num*(-1)); //add negative digit to the stack
+				}
+				//negative sign in front of parenthesis
+				else if (next_char == '('){
+					tokens.putback(next_char); //put back the paren and let David's recursion handle it. 
+					operand_stack.push(-1); //add * -1 to stacks so flip sign of what inside parenthesis
+					operator_stack.push('*');
+				}
+				else
+					throw Syntax_Error("digit must follow negative sign @ char: " + std::to_string(char_idx));
+			}
+
+			//decremnt / increment
+			else if (upcoming == '+' || upcoming == '-'){ 
 				is_decrement_increment(tokens, next_char, upcoming, operator_stack, operand_stack);
-				break;
-			case '=':
+			}
+			//Boolean
+			else if (upcoming == '='){ 
 				if (next_char == '!' || next_char == '>' || next_char == '<' || next_char == '=')
 				{
 					solveBooleanEquation(next_char, operator_stack, operand_stack, tokens);
 					break;
 				}
 				else
-					throw Syntax_Error("Too many operators! Equal sign can only follow !, > or < operators @ char: " + std::to_string(char_idx));
-			default:
-				//if operator stack is not empty then figure out precedence, 
-				//if it is empty then automatically add it
-				if (!operator_stack.empty()){
+					throw Syntax_Error("Equal sign can only follow !, > or < operators @ char: " + std::to_string(char_idx));
+			}
+			//Lone operator found NOT decrement/increment NOT boolean
+			else { 
+				//check precedence and add operator to stack 
+				if (!operator_stack.empty()){ //Operator Stack is NOT empty
 					char top = operator_stack.top();
 
 					//if top is less precedence than next char, add to stack, 
@@ -91,24 +127,29 @@ int evaluator::exp_evaluator(const string expression)
 						find_equation(next_char, completed, operator_stack, operand_stack);
 					}
 				}
-				else {
+				else { //Stack is empty automatically add operator
 					operator_stack.push(next_char);
 				}
 			}
+			
 			digit = false; //can accept a digit now
 		}
-
+		/* END: Next Character is a OPERATOR*/
 	}
+	
 	completed = true; //finished stringstream
 
 	//finish equation until all operators are gone
 	while (!operator_stack.empty()){
-		if (operator_stack.top() == '!')
+		if (operator_stack.top() == '!'){
 			solveBooleanEquation(operator_stack.top(), operator_stack, operand_stack, tokens);
+			break;
+		}
 		else
 			find_equation(operator_stack.top(), completed, operator_stack, operand_stack);
-		break;
+		
 	}
+	//equation solved return solution
 	return operand_stack.top();
 }
 
