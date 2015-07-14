@@ -22,7 +22,6 @@ public:
 	int solve(int, int, char);
 	void find_equation(char top, bool completed, stack<char>& operator_stack, stack<int>& operand_stack);
 	void is_decrement_increment(istringstream&, char, char, stack<char>& operator_stack, stack<int>& operand_stack);
-	void is_bool(istringstream& , char );
 
 
 private:

@@ -7,6 +7,7 @@ using namespace std;
 
 int main()
 {
+	int answer0 = 0;
 	int answer = 0;
 	int answer2 = 0;
 	int answer3 = 0;
@@ -27,12 +28,12 @@ int main()
 	{
 		//redeclaring eval object because I want index of error to be correct if reported 
 		evaluator l;
-		answer = l.exp_evaluator("!(2 > 1) || (3 < 4)");
+		answer0 = l.exp_evaluator("!(2 > 1) || (3 < 4)");
 		evaluator l1;
 		answer2 = l1.exp_evaluator("(4 >= 3) && !(2 == 2)");
-		/*
+		
 		evaluator l2;
-		answer3 = l2.exp_evaluator("1==4");
+		answer3 = l2.exp_evaluator("1==1");
 		evaluator l3;
 		answer4 = l3.exp_evaluator("!(4 > -5)");
 		evaluator l5;
@@ -47,30 +48,29 @@ int main()
 		evaluator lNegative3;
 		answer9 = lNegative3.exp_evaluator("2*-(3*2)");
 		
-		
+		cout << "Example error: " ;
 		evaluator lError, lError2;
 		error_test1 = lError.exp_evaluator("(3+4))");
 		//error_test2 = lError2.exp_evaluator("*");
-		*/
+		
 	}catch(const invalid_argument& ia)
 	{
 		cerr << "Invalid argument: " << ia.what() << '\n';
 	}
 
 	//Table for testing
-	cout << answer << endl << answer2 << endl;
-	/*
-	cout << endl << setw(27)<< "<--Testing-->" << endl;
-	cout << setw(20) << "Expression" << setw(10) << "Result" << endl; 
-	cout << setw(20) << "1+2*3" << setw(10) << answer << endl;
-	cout << setw(20) << "2+2^2*3" << setw(10) << answer2 << endl;
-	cout << setw(20) << "1==2" << setw(10) << answer3 << endl;
-	cout << setw(20) << "!(4 > -5)" << setw(10) << answer4 << endl;
-	cout << setw(20) << "++++2-5*(3^2)" << setw(10) << answer6 << endl;
-	cout << setw(20) << "-2+2^2*3" << setw(10) << answer7 << endl;
-	cout << setw(20) << "-2" << setw(10) << answer8 << endl;
-	cout << setw(20) << "2*-(3*2)" << setw(10) << answer9 << endl;
-	*/
+	
+	cout << endl << setw(29)<< "<--Testing-->" << endl;
+	cout << setw(25) << "Expression" << setw(10) << "Result" << endl; 
+	cout << setw(25) << "!(2 > 1) || (3 < 4)" << setw(10) << answer0 << endl;
+	cout << setw(25) << "(4 >= 3) && !(2 == 2)" << setw(10) << answer2 << endl;
+	cout << setw(25) << "1==1" << setw(10) << answer3 << endl;
+	cout << setw(25) << "!(4 > -5)" << setw(10) << answer4 << endl;
+	cout << setw(25) << "++++2-5*(3^2)" << setw(10) << answer6 << endl;
+	cout << setw(25) << "-2+2^2*3" << setw(10) << answer7 << endl;
+	cout << setw(25) << "-2" << setw(10) << answer8 << endl;
+	cout << setw(25) << "2*-(3*2)" << setw(10) << answer9 << endl;
+	
 	cout << endl;
 	system("pause");
 	return 0;

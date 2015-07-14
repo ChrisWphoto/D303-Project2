@@ -3,10 +3,10 @@
 #include <sstream>
 #include <stack>
 #include "evaluator.h"
-using namespace std;															//** KEY ***************************************
-																				//  | : ||     & : &&      = : ==      n : !=
-																				//  g : >=     l : <=      ~ : negative
-const string evaluator::operators = "|&=n>g<l+-*/%^~di!";						//  d : --     i : ++
+using namespace std;																				//** KEY ***************************************
+																									//  | : ||     & : &&      = : ==      n : !=
+																									//  g : >=     l : <=      ~ : negative
+const string evaluator::operators = "|&=n>g<l+-*/%^~di!";											//  d : --     i : ++
 const int evaluator::precedence[] = { 1, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 6, 7, 8, 8, 8, 8 };		/////////////////////////////////////////////////
 
 int evaluator::exp_evaluator(const string expression)
@@ -17,7 +17,7 @@ int evaluator::exp_evaluator(const string expression)
 	bool digit = false;
 	char next_char, upcoming;
 	istringstream tokens(expression + ' ');//added ending whitespace to help with any issues of missing the last digit on putback 7-13
-	//may not be necessary for ending whitespace, but it made my ++2 work.
+	
 
 	//Read from string until empty
 	while (++char_idx, tokens >> next_char)
@@ -39,7 +39,8 @@ int evaluator::exp_evaluator(const string expression)
 			throw Syntax_Error("Extra closing parenthesis found @ char: " + std::to_string(char_idx));
 		else if (next_char == '(')
 		{
-			string parentheticalExp = ""; // ADDED BY DR for parentheses case
+			// Expression has Parentheses - DR
+			string parentheticalExp = ""; 
 			int parenthesisCount = 1;
 			bool open_parentheses = true;
 			char addChar;
@@ -68,7 +69,7 @@ int evaluator::exp_evaluator(const string expression)
 			
 			upcoming = tokens.peek(); //check next operator for negative and decrement/increment
 
-			//Negative # at beggining of string
+			//Negative number at beginning of string
 			if (next_char == '-' && operator_stack.empty() && isdigit(upcoming) && operand_stack.empty()){ 
 				int num;
 				tokens >> num;
@@ -372,7 +373,4 @@ void evaluator::is_decrement_increment(istringstream& tokens, char next_char, ch
 		throw Syntax_Error("Expected a digit, did not receive it @ char: " + std::to_string(char_idx));
 	}
 }
-void evaluator::is_bool(istringstream& is, char next_char)
-{
-	//?
-}
+
