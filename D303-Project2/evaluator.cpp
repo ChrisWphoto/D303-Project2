@@ -133,6 +133,10 @@ int evaluator::exp_evaluator(const string expression)
 				else
 					throw Syntax_Error("Equal sign can only follow !, > or < operators @ char: " + std::to_string(char_idx));
 			}
+			// Logical Not '!'
+			else if (next_char == '!' && upcoming == '!'){
+				tokens.ignore(); // '!!' cancel out. Ignore and Carry on. 
+			}
 			
 			//Lone operator found NOT decrement/increment NOT boolean
 			else { 
