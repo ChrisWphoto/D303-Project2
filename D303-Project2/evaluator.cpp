@@ -16,7 +16,7 @@ int evaluator::exp_evaluator(const string expression)
 	bool completed = false;
 	bool digit = false;
 	char next_char, upcoming;
-	istringstream tokens(expression + ' ');//added ending whitespace to help with any issues of missing the last digit on putback 7-13
+	istringstream tokens(expression + ' '); //added ending whitespace to help with any issues of missing the last digit on putback 7-13
 	
 
 	//Read from string until empty
@@ -35,6 +35,7 @@ int evaluator::exp_evaluator(const string expression)
 
 			digit = true; //now expecting an operator
 		}
+
 		else if (next_char == ')')
 			throw Syntax_Error("Extra closing parenthesis found @ char: " + std::to_string(char_idx));
 		else if (next_char == '(')
@@ -69,16 +70,24 @@ int evaluator::exp_evaluator(const string expression)
 			
 			upcoming = tokens.peek(); //check next operator for negative and decrement/increment
 
-			//Negative number at beginning of string
-			if (next_char == '-' && operator_stack.empty() && isdigit(upcoming) && operand_stack.empty()){ 
-				int num;
-				tokens >> num;
-				++char_idx;
-				operand_stack.push(num*-1); //push negative number to stack
+			//Negative number at beginning of expression '-1' or '-(3+2)'
+			if (next_char == '-' && operator_stack.empty() && (isdigit(upcoming) || upcoming == '(' )  && operand_stack.empty()){ 
+				//lone negative '-1'
+				if (isdigit(upcoming)){
+					int num;
+					tokens >> num;
+					++char_idx;
+					operand_stack.push(num*-1); //push negative number to stack
+				}
+				//negative before paren '-(3+2)'
+				if (upcoming == '('){
+					operator_stack.push('*');
+					operand_stack.push(-1);
+				}
 			}
 
-			//Negative number in middle of string
-			else if (next_char != upcoming && upcoming == '-'){ //We have found a negative. i.e. 3*-1 = -3
+			//Negative number in middle of string '3*-1' 
+			else if (next_char != upcoming && upcoming == '-'){ 
 				operator_stack.push(next_char);
 				tokens.ignore(); //ignore negative sign
 				tokens >> next_char; //grab next char
@@ -118,12 +127,13 @@ int evaluator::exp_evaluator(const string expression)
 					solveBooleanEquation(next_char, operator_stack, operand_stack, tokens);
 			}
 			//Boolean
-			else if (upcoming == '='){ 
+			else if (upcoming == '='){
 				if (next_char == '!' || next_char == '>' || next_char == '<' || next_char == '=')
 					solveBooleanEquation(next_char, operator_stack, operand_stack, tokens);
 				else
 					throw Syntax_Error("Equal sign can only follow !, > or < operators @ char: " + std::to_string(char_idx));
 			}
+			
 			//Lone operator found NOT decrement/increment NOT boolean
 			else { 
 				//check precedence and add operator to stack 
