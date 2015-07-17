@@ -161,6 +161,7 @@ int evaluator::exp_evaluator(const string expression)
 			digit = false; //can accept a digit now
 		}
 		/* END: Next Character is a OPERATOR*/
+
 	}
 	
 	completed = true; //finished stringstream

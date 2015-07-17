@@ -15,7 +15,7 @@ int main()
 
 	exp1 = "3*-(2+3)";
 	exp2 = "-(3+2)";
-	exp3 = "-(3)";
+	exp3 = "(-3)";
 	exp4 = "++3*-4";
 	exp5 = "(5 >= 1)"; 
 	exp6 = "!(3 || 5)"; //anything not 0 is true
@@ -23,6 +23,7 @@ int main()
 	exp8 = "!!(5 >=1)";
 	exp9 = "!!!(5 > 1)";
 	exp10 = "!!!!(5*1 > 1+1)";
+	exp11 = "--1*5";
 	
 
 	//testing
@@ -48,6 +49,8 @@ int main()
 		a9 = l9.exp_evaluator(exp9);
 		cout << "Evaluating a10" << endl;
 		a10 = l10.exp_evaluator(exp10);
+		cout << "Evaluating a11" << endl;
+		a11 = l11.exp_evaluator(exp11);
 
 
 		cout << endl << setw(29) << "<--Testing-->" << endl;
@@ -62,6 +65,7 @@ int main()
 		cout << setw(25) << exp8 + " " << setw(10) << a8 << endl;
 		cout << setw(25) << exp9 + " " << setw(10) << a9 << endl;
 		cout << setw(25) << exp10 + " " << setw(10) << a10 << endl;
+		cout << setw(25) << exp11 + " " << setw(10) << a11 << endl;
 
 
 
@@ -71,7 +75,7 @@ int main()
 	}
 
 	cout << endl;
-	system("pause");
+	std::system("pause");
 	return 0;
 }
 
